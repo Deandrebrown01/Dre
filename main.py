@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import pymysql
 
 app = Flask(__name__)
@@ -33,14 +33,33 @@ def register():
         cursor.close()
         con.commit()
 
-
-
-
-
-
-
-      
     return render_template("register.html.jinja")
+
+
+@app.route("/signup",methods = ["POST", "GET"])
+def sign():
+  if request.method == 'POST':
+    username = request.form["username"]
+    password= request.form["password"]
+
+    
+    
+    cursor = con.cursor()
+    
+    
+
+    
+    cursor.execute(f"SELECT * FROM `users` WHERE `username` = '{username}'")
+
+    user = cursor.fetchone()
+
+    if password == user["password "]:
+       return redirect('/')
+
+
+
+
+     
 
 
       
