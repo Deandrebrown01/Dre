@@ -1,7 +1,40 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect 
+import flask_login
 import pymysql
 
 app = Flask(__name__)
+
+app.secret_key ="something_secret" #change this
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+class User:
+    is_authenticated = True
+    is_anonymous = False
+    is_active = True
+   
+    def __init__(self,id,username): #add the rest from the users database
+      self.username = username
+      self.id = id
+      pass
+    def get_id(self):
+      return str(self.id)
+@login_manager.user_loader
+def load_user(user_id):
+    cursor = con.cursor()
+
+    cursor.execute("SELECT* FROM `users` WHERE `id` =" + str(user_id))
+    result = cursor.fetchone()
+    cursor.close()
+    cursor.commit()
+    if result is None:
+        return None
+    
+    return User(result["id"], result ["username"]) #add the rest from users database
+
+       
+
+
 
 con= pymysql.connect(
     database = "dbrown_socialmedia",
@@ -35,6 +68,11 @@ def register():
 
     return render_template("register.html.jinja")
 
+@app.route('/feed')
+@flask_login.login_required
+def post_feed():
+   return 'feed page'
+
 
 @app.route("/signup",methods = ["POST", "GET"])
 def sign():
@@ -42,7 +80,7 @@ def sign():
     username = request.form["username"]
     password= request.form["password"]
 
-    
+
     
     cursor = con.cursor()
     
@@ -51,10 +89,15 @@ def sign():
     
     cursor.execute(f"SELECT * FROM `users` WHERE `username` = '{username}'")
 
-    user = cursor.fetchone()
+    result = cursor.fetchone()
 
-    if password == user["password "]:
+    if password == result["password "]:
+       user = load_user (result['id'])
+       flask_login.login_user(user)
        return redirect('/')
+    
+
+    
 
 
 
