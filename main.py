@@ -46,6 +46,8 @@ con= pymysql.connect(
 
 @app.route('/')
 def Index():
+    if flask_login.current_user.is_authenticated:
+       return redirect('/feed')
     return render_template("home.html.jinja")
 
 @app.route("/register", methods =["POST", "GET"])
@@ -70,39 +72,36 @@ def register():
 
 @app.route('/feed')
 @flask_login.login_required
-def post_feed():
-   return 'feed page'
+def feed():
+   return flask_login.current_user
 
 
-@app.route("/signup",methods = ["POST", "GET"])
+@app.route("/signin",methods = ["POST", "GET"])
 def sign():
-  if request.method == 'POST':
-    username = request.form["username"]
-    password= request.form["password"]
+    if request.method == 'POST':
+        username = request.form["username"]
+        password= request.form["password"]
 
+        cursor = con.cursor()
+        
+        cursor.execute(f"SELECT * FROM `users` WHERE `username` = '{username}'")
+        cursor.close()
+        con.commit()
+
+        result = cursor.fetchone()
+
+        if password == result["password "]:
+            user = load_user (result['id'])
+            flask_login.login_user(user)
+            return redirect('/')
+    
+    return render_template("sign.html.jinja")
 
     
-    cursor = con.cursor()
-    
-    
-
-    
-    cursor.execute(f"SELECT * FROM `users` WHERE `username` = '{username}'")
-
-    result = cursor.fetchone()
-
-    if password == result["password "]:
-       user = load_user (result['id'])
-       flask_login.login_user(user)
-       return redirect('/')
-    
-
     
 
 
 
-
-     
 
 
       
