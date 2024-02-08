@@ -20,62 +20,43 @@ h2{
    text-align: center;
 }
 
-.header {
-  background-color: #000000;
-  text-align: center;
-  padding: 20px;
+.topnav {
+  background-color: #333;
+  overflow: hidden;
 }
 
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
 
 
 </style>
 
 <header>
 
-<nav class="navbar navbar-expand-lg navbar-dark primary-color">
-  <div class="container">
-    
-    <a class="navbar-brand" rel="noopener" target="_blank" href="#">Navbar</a>
-    
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <div class="collapse navbar-collapse" id="basicExampleNav">
-      
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" rel="noopener" target="_blank" href="home.html.jinja">Home
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" rel="noopener" target="_blank" href="register.html.jinja">Sign Up/register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" rel="noopener" target="_blank" href="#">Pricing</a>
-        </li>
-        
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown/<a>
-          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" rel="noopener" target="_blank" href="#">Action</a>
-            <a class="dropdown-item" rel="noopener" target="_blank" href="#">Another action</a>
-            <a class="dropdown-item" rel="noopener" target="_blank" href="#">Something else here</a>
-          </div>
-        </li>
-      </ul>
-      
-      <form class="form-inline">
-        <div class="md-form my-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-        </div>
-      </form>
-    </div>
-    
-  </div>
-</nav>
-
+<div class="topnav">
+  <a class="active" href="#home">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+  <a href="#about">About</a>
+</div>
 
 
 
