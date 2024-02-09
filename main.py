@@ -70,7 +70,7 @@ def register():
 
     return render_template("register.html.jinja")
 
-@app.route('/feed')
+@app.route('/feed',methods = [])
 @flask_login.login_required
 def feed():
    return flask_login.current_user
