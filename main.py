@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect 
+from flask import Flask, render_template, request, redirect , g
 import flask_login
 import pymysql
 
@@ -19,14 +19,16 @@ class User:
       pass
     def get_id(self):
       return str(self.id)
+
 @login_manager.user_loader
 def load_user(user_id):
-    cursor = con.cursor()
+    cursor = get_db().cursor()
+
 
     cursor.execute("SELECT* FROM `users` WHERE `id` =" + str(user_id))
     result = cursor.fetchone()
     cursor.close()
-    cursor.commit()
+    get_db().commit()
     if result is None:
         return None
     
@@ -36,13 +38,27 @@ def load_user(user_id):
 
 
 
-con= pymysql.connect(
-    database = "dbrown_socialmedia",
-    user="dbrown",
-    password="228370052",
-    host="10.100.33.60",
-    cursorclass= pymysql.cursors.DictCursor
-) 
+def connect_db():
+    return pymysql.connect(
+        host="10.100.33.60",
+        user="dbrown",
+        password="228370052",
+        database="De'Andre",
+        cursorclass=pymysql.cursors.DictCursor,
+        autocommit=True
+    )
+
+def get_db():
+    '''Opens a new database connection per request.'''        
+    if not hasattr(g, 'db'):
+        g.db = connect_db()
+    return g.db    
+
+@app.teardown_appcontext
+def close_db(error):
+    '''Closes the database connection at the end of request.'''    
+    if hasattr (g, 'db'):
+        g.db.close() 
 
 @app.route('/')
 def Index():
@@ -63,10 +79,11 @@ def register():
         photo= request.form["photo"]
 
 
-        cursor = con.cursor()
+        cursor = get_db().cursor()
         cursor.execute(f"INSERT INTO `users` (__PUT_COLUMNS_HERE__) VALUES ('{username}', '{display_name}', '{password}', '{banned}', '{email}', '{bio}', '{photo}',)")
         cursor.close()
-        con.commit()
+        get_db().commit()
+        return redirect ('/')
 
     return render_template("register.html.jinja")
 
@@ -82,11 +99,11 @@ def sign():
         username = request.form["username"]
         password= request.form["password"]
 
-        cursor = con.cursor()
+        cursor = get_db().cursor()
         
         cursor.execute(f"SELECT * FROM `users` WHERE `username` = '{username}'")
         cursor.close()
-        con.commit()
+        get_db().commit()
 
         result = cursor.fetchone()
 
@@ -98,7 +115,15 @@ def sign():
     return render_template("sign.html.jinja")
 
     
-    
+@app.route('/post', methods= ['POST'])
+@flask_login.login_required
+def create_post():
+    description = request.form['description']
+    user_id = flask_login.current_user.id
+
+    cursor = get_db().cursor()
+
+    cursor.execute("INSERT INTO `posts` (`description`, `user_id`)")
 
 
 
